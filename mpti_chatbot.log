@@ -1,0 +1,89 @@
+2025-11-10 11:23:09,915 - werkzeug - INFO - 127.0.0.1 - - [10/Nov/2025 11:23:09] "OPTIONS /chat/ai HTTP/1.1" 200 -
+2025-11-10 11:23:10,105 - __main__ - INFO - No database matches found for: 'talk to me  about the tact program'
+2025-11-10 11:23:10,106 - __main__ - INFO - ⚠️ No specific knowledge base matches found - using general MPTI info
+2025-11-10 11:23:10,107 - __main__ - INFO - 🤖 Using OpenAI with 0 MPTI website sources...
+2025-11-10 11:23:10,107 - __main__ - INFO - No specific context available
+2025-11-10 11:23:10,108 - __main__ - INFO - Calling Groq API with 6 messages
+2025-11-10 11:23:10,968 - __main__ - ERROR - Groq API error: 400 - {"error":{"message":"The model `llama-3.1-70b-versatile` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.","type":"invalid_request_error","code":"model_decommissioned"}}
+
+2025-11-10 11:23:10,971 - __main__ - WARNING - groq response failed, falling back to rule-based
+2025-11-10 11:23:10,972 - __main__ - INFO - 💬 Chat completed - User: 'talk to me  about the tact program...' | Source: ai_enhanced_mpti | Sources: 0 | Time: 0.86s
+2025-11-10 11:23:10,974 - werkzeug - INFO - 127.0.0.1 - - [10/Nov/2025 11:23:10] "POST /chat/ai HTTP/1.1" 200 -
+2025-11-10 11:28:29,816 - __main__ - INFO - Starting MPTI website scraping...
+2025-11-10 11:28:35,634 - __main__ - INFO - Scraped home: 1265 chars
+2025-11-10 11:28:43,914 - __main__ - INFO - Scraped about: 3000 chars
+2025-11-10 11:28:48,466 - __main__ - INFO - Scraped courses: 323 chars
+2025-11-10 11:28:54,136 - __main__ - INFO - Scraped programs: 3000 chars
+2025-11-10 11:28:58,860 - __main__ - INFO - Scraped admissions: 3000 chars
+2025-11-10 11:29:06,895 - __main__ - INFO - Scraped contact: 350 chars
+2025-11-10 11:29:11,694 - __main__ - INFO - Scraped tact-program: 3000 chars
+2025-11-10 11:29:17,996 - __main__ - INFO - Scraped mechanical-engineering: 1025 chars
+2025-11-10 11:29:23,526 - __main__ - INFO - Scraped electrical-engineering: 1031 chars
+2025-11-10 11:29:27,729 - __main__ - INFO - Scraped welding-fabrication: 1111 chars
+2025-11-10 11:29:35,013 - __main__ - INFO - Scraped instrumentation: 1391 chars
+2025-11-10 11:29:40,444 - __main__ - INFO - Scraped equipment-training: 2626 chars
+2025-11-10 11:29:41,444 - __main__ - INFO - Successfully scraped 12 pages
+2025-11-10 11:29:41,445 - __main__ - INFO - Loaded 12 pages from MPTI website
+2025-11-10 11:29:41,445 - __main__ - INFO - Knowledge base initialized
+2025-11-10 11:29:41,445 - __main__ - INFO - Knowledge base initialized
+2025-11-10 11:29:45,504 - __main__ - INFO - Ollama AI initialized - Available: False
+2025-11-10 11:29:45,505 - __main__ - INFO - AI handler initialized
+2025-11-10 11:29:45,507 - __main__ - INFO - MPTI Chatbase - Webscraper + Ollama
+2025-11-10 11:29:45,508 - __main__ - INFO - Server: 0.0.0.0:5000
+2025-11-10 11:29:45,508 - __main__ - INFO - AI Engine: Rule-Based Only
+2025-11-10 11:29:45,508 - __main__ - INFO - Knowledge Base: 12 documents loaded
+2025-11-10 11:29:45,508 - __main__ - INFO - Ready to provide MPTI assistance!
+2025-11-10 11:29:45,560 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.20.10.6:5000
+2025-11-10 11:29:45,560 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-11-10 11:29:45,562 - werkzeug - INFO -  * Restarting with stat
+2025-11-10 11:29:46,190 - __main__ - INFO - Starting MPTI website scraping...
+2025-11-10 11:29:49,443 - __main__ - INFO - Scraped home: 1265 chars
+2025-11-10 11:29:56,948 - __main__ - INFO - Scraped about: 3000 chars
+2025-11-10 11:30:01,337 - __main__ - INFO - Scraped courses: 323 chars
+2025-11-10 11:30:05,771 - __main__ - INFO - Scraped programs: 3000 chars
+2025-11-10 11:30:10,047 - __main__ - INFO - Scraped admissions: 3000 chars
+2025-11-10 11:30:14,227 - __main__ - INFO - Scraped contact: 350 chars
+2025-11-10 11:30:19,755 - __main__ - INFO - Scraped tact-program: 3000 chars
+2025-11-10 11:30:25,276 - __main__ - INFO - Scraped mechanical-engineering: 1025 chars
+2025-11-10 11:30:32,861 - __main__ - INFO - Scraped electrical-engineering: 1031 chars
+2025-11-10 11:30:37,070 - __main__ - INFO - Scraped welding-fabrication: 1111 chars
+2025-11-10 11:30:46,897 - __main__ - INFO - Scraped instrumentation: 1391 chars
+2025-11-10 11:30:56,603 - __main__ - INFO - Scraped equipment-training: 2626 chars
+2025-11-10 11:30:57,604 - __main__ - INFO - Successfully scraped 12 pages
+2025-11-10 11:30:57,604 - __main__ - INFO - Loaded 12 pages from MPTI website
+2025-11-10 11:30:57,604 - __main__ - INFO - Knowledge base initialized
+2025-11-10 11:30:57,604 - __main__ - INFO - Knowledge base initialized
+2025-11-10 11:31:01,650 - __main__ - INFO - Ollama AI initialized - Available: False
+2025-11-10 11:31:01,650 - __main__ - INFO - AI handler initialized
+2025-11-10 11:31:01,652 - __main__ - INFO - MPTI Chatbase - Webscraper + Ollama
+2025-11-10 11:31:01,652 - __main__ - INFO - Server: 0.0.0.0:5000
+2025-11-10 11:31:01,652 - __main__ - INFO - AI Engine: Rule-Based Only
+2025-11-10 11:31:01,652 - __main__ - INFO - Knowledge Base: 12 documents loaded
+2025-11-10 11:31:01,653 - __main__ - INFO - Ready to provide MPTI assistance!
+2025-11-10 11:31:01,708 - werkzeug - WARNING -  * Debugger is active!
+2025-11-10 11:31:01,723 - werkzeug - INFO -  * Debugger PIN: 125-864-749
+2025-11-10 11:31:02,695 - werkzeug - INFO - 127.0.0.1 - - [10/Nov/2025 11:31:02] "OPTIONS /chat/ai HTTP/1.1" 200 -
+2025-11-10 11:31:02,962 - __main__ - INFO - No database matches found for: 'talk to me  about the tact program'
+2025-11-10 11:31:02,963 - __main__ - INFO - ⚠️ No specific knowledge base matches found - using general MPTI info
+2025-11-10 11:31:02,963 - __main__ - INFO - 🤖 Using OpenAI with 0 MPTI website sources...
+2025-11-10 11:31:02,963 - __main__ - INFO - No specific context available
+2025-11-10 11:31:02,963 - __main__ - INFO - Calling Groq API with 6 messages
+2025-11-10 11:31:04,248 - __main__ - ERROR - Groq API error: 400 - {"error":{"message":"The model `llama-3.1-70b-versatile` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.","type":"invalid_request_error","code":"model_decommissioned"}}
+
+2025-11-10 11:31:04,251 - __main__ - WARNING - groq response failed, falling back to rule-based
+2025-11-10 11:31:04,251 - __main__ - INFO - 💬 Chat completed - User: 'talk to me  about the tact program...' | Source: ai_enhanced_mpti | Sources: 0 | Time: 1.29s
+2025-11-10 11:31:04,252 - werkzeug - INFO - 127.0.0.1 - - [10/Nov/2025 11:31:04] "POST /chat/ai HTTP/1.1" 200 -
+2025-11-10 11:31:33,027 - werkzeug - INFO - 127.0.0.1 - - [10/Nov/2025 11:31:33] "OPTIONS /chat/ai HTTP/1.1" 200 -
+2025-11-10 11:31:33,301 - __main__ - INFO - No database matches found for: 'talk to me'
+2025-11-10 11:31:33,301 - __main__ - INFO - ⚠️ No specific knowledge base matches found - using general MPTI info
+2025-11-10 11:31:33,301 - __main__ - INFO - 🤖 Using OpenAI with 0 MPTI website sources...
+2025-11-10 11:31:33,301 - __main__ - INFO - No specific context available
+2025-11-10 11:31:33,301 - __main__ - INFO - Calling Groq API with 6 messages
+2025-11-10 11:31:34,127 - __main__ - ERROR - Groq API error: 400 - {"error":{"message":"The model `llama-3.1-70b-versatile` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.","type":"invalid_request_error","code":"model_decommissioned"}}
+
+2025-11-10 11:31:34,129 - __main__ - WARNING - groq response failed, falling back to rule-based
+2025-11-10 11:31:34,132 - __main__ - INFO - 💬 Chat completed - User: 'talk to me...' | Source: ai_enhanced_mpti | Sources: 0 | Time: 0.83s
+2025-11-10 11:31:34,132 - werkzeug - INFO - 127.0.0.1 - - [10/Nov/2025 11:31:34] "POST /chat/ai HTTP/1.1" 200 -
