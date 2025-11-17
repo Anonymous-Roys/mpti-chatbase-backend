@@ -416,6 +416,12 @@ def health_check():
         'external_links': sum(len(links) for links in chatbot.external_links.values())
     })
 
+
+@app.route('/', methods=['GET', 'HEAD'])
+def root():
+    """Root endpoint used by PaaS health checks. Returns same payload as /health."""
+    return health_check()
+
 @app.route('/chat', methods=['POST'])
 def chat():
     """Main chat endpoint with external links support"""
