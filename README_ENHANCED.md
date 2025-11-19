@@ -63,7 +63,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 
 # Server Configuration
 HOST=0.0.0.0
-PORT=5000
+PORT=10000
 DEBUG=False
 
 # MPTI Website Configuration
@@ -121,7 +121,7 @@ This will test:
 
 ```javascript
 // Chat with MPTI Assistant
-fetch('http://localhost:5000/chat/ai', {
+fetch('http://localhost:10000/chat/ai', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -219,7 +219,7 @@ fetch('http://localhost:5000/chat/ai', {
 1. **Backend Not Starting**
    - Check Python installation: `python --version`
    - Verify dependencies: `pip install -r requirements.txt`
-   - Check port availability: Ensure port 5000 is not in use
+   - Check port availability: Ensure port 10000 is not in use
 
 2. **Scraping Issues**
    - Verify internet connection
@@ -269,7 +269,7 @@ For technical support or questions about the MPTI Chatbase AI system:
 
 1. Check the logs in `mpti_chatbot.log`
 2. Run the test suite: `python test_scraper.py`
-3. Verify backend health: `http://localhost:5000/health`
+3. Verify backend health: `http://localhost:10000/health`
 4. Review WordPress plugin settings and logs
 
 ---

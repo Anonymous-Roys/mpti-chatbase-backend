@@ -475,20 +475,12 @@ def refresh_knowledge():
 
 if __name__ == '__main__':
     host = os.getenv('HOST', '0.0.0.0')
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 10000))
     
-    logger.info("=" * 50)
-    logger.info("🚀 MPTI Enhanced Chatbot Starting...")
-    logger.info(f"📍 Host: {host}")
-    logger.info(f"🔌 Port: {port}")
-    logger.info(f"📚 Knowledge Sections: {len(chatbot.knowledge)}")
-    logger.info(f"🔗 External Links: {sum(len(links) for links in chatbot.external_links.values())}")
-    logger.info("=" * 50)
+    logger.info("🚀 Enhanced MPTI Chatbot with External Links")
+    logger.info(f"📊 Knowledge: {len(chatbot.knowledge)} sections loaded")
+    logger.info(f"🔗 External Links: {sum(len(links) for links in chatbot.external_links.values())} found")
+    logger.info(f"🌐 Server: {host}:{port}")
+    logger.info("✅ Ready to assist with MPTI inquiries and navigate to external forms!")
     
-    try:
-        app.run(host=host, port=port, debug=False)
-        logger.info("✅ Server started successfully")
-    except Exception as e:
-        logger.error(f"❌ Failed to start server: {e}")
-        # Exit with error code for PaaS to detect failure
-        sys.exit(1)
+    app.run(host=host, port=port, debug=False)
