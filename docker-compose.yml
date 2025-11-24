@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mpti-chatbot:
+    build: .
+    ports:
+      - "10000:10000"
+    environment:
+      - PORT=10000
+      - DEBUG=False
+      - MPTI_BASE_URL=https://www.mptigh.com/
+      - SCRAPE_TIMEOUT=15
+      - SCRAPE_INTERVAL=7200
+      - MAX_MESSAGE_LENGTH=1000
+      - RATE_LIMIT_REQUESTS=50
+      - RATE_LIMIT_WINDOW=60
+      - CACHE_TYPE=memory
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:10000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - mpti-network
+
+networks:
+  mpti-network:
+    driver: bridge

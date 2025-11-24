@@ -164,8 +164,7 @@ def save_model():
         return jsonify({'error': 'Failed to save model'}), 500
 
 if __name__ == '__main__':
-    host = os.getenv('HOST', '0.0.0.0')
-    port = int(os.getenv('PORT', 10000))
+    port = int(os.environ.get('PORT', 10000))
     debug = os.getenv('DEBUG', 'False').lower() == 'true'
     
     logger.info("🚀 MPTI Chatbot - Cached & Monitored")
@@ -179,7 +178,7 @@ if __name__ == '__main__':
     
     logger.info(f"🛡️ Rate limiting: {Config.RATE_LIMIT_REQUESTS} req/{Config.RATE_LIMIT_WINDOW}s")
     logger.info(f"📈 Metrics endpoint: /metrics")
-    logger.info(f"🌐 Server: {host}:{port}")
+    logger.info(f"🌐 Server: 0.0.0.0:{port}")
     logger.info("✅ Ready with caching, monitoring, and structured logging!")
     
-    app.run(host=host, port=port, debug=debug)
+    app.run(host='0.0.0.0', port=port, debug=debug)
