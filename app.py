@@ -20,7 +20,7 @@ from monitoring import monitor_endpoint, metrics, structured_logger
 # Configuration from environment
 class Config:
     BASE_URL = os.getenv('MPTI_BASE_URL', 'https://www.mptigh.com/')
-    SCRAPE_TIMEOUT = int(os.getenv('SCRAPE_TIMEOUT', '10'))
+    SCRAPE_TIMEOUT = int(os.getenv('SCRAPE_TIMEOUT', '60'))
     MAX_MESSAGE_LENGTH = int(os.getenv('MAX_MESSAGE_LENGTH', '500'))
     RATE_LIMIT_REQUESTS = int(os.getenv('RATE_LIMIT_REQUESTS', '10'))
     RATE_LIMIT_WINDOW = int(os.getenv('RATE_LIMIT_WINDOW', '60'))

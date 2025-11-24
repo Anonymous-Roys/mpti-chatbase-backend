@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class KnowledgeManager:
     def __init__(self, scraper, scrape_interval=3600, cache_type='memory'):
         self.scraper = scraper
-        self.scrape_interval = scrape_interval
+        self.scrape_interval = max(scrape_interval, 1800)  # Minimum 30 minutes for unreliable sites
         self.knowledge = {}
         self.external_links = {}
         self.status = 'idle'
@@ -19,18 +19,39 @@ class KnowledgeManager:
         self._initialize()
     
     def _get_fallback_knowledge(self):
-        """Fallback knowledge when scraping fails"""
+        """Enhanced fallback knowledge when scraping fails"""
         return {
             'home': '''MPTI Technical Institute - Leading Technical Education in Ghana
             
 MPTI Technical Institute is a premier institution offering technical and vocational education programs.
-Programs: Technical Education, Engineering Technology, Professional Certifications
-Website: https://www.mptigh.com/''',
+Programs: Technical Education, Engineering Technology, Professional Certifications, TACT Program
+Website: https://www.mptigh.com/
+Contact: Visit our website for current contact information and application details.''',
             
-            'tact_details': '''TACT Program - Technical Advancement and Certification Training
+            'programs': '''MPTI Programs and Courses
             
-Advanced technical training for working professionals. Industry certifications, flexible scheduling.
-For more information: https://www.mptigh.com/tact-program'''
+Technical Education Programs:
+- Engineering Technology
+- Information Technology
+- Business and Management
+- Professional Certifications
+- TACT (Technical Advancement and Certification Training)
+            
+For detailed program information, admission requirements, and applications, visit https://www.mptigh.com/''',
+            
+            'admissions': '''MPTI Admissions Information
+            
+Admission Requirements:
+- Completed application form
+- Academic transcripts
+- Relevant certificates
+            
+Application Process:
+1. Visit https://www.mptigh.com/ for current application forms
+2. Submit required documents
+3. Await admission decision
+            
+For specific admission requirements and deadlines, please visit our website or contact the admissions office.'''
         }
     
     def _initialize(self):
@@ -71,27 +92,34 @@ For more information: https://www.mptigh.com/tact-program'''
                 self.status = 'updating'
                 structured_logger.logger.info("Updating knowledge...")
                 
+                # Reduced page list for unreliable website
                 pages = {
-                    'home': '', 'about': 'about', 'programs': 'programs', 
-                    'courses': 'courses', 'admissions': 'admissions', 
-                    'contact': 'contact', 'tact-program': 'tact-program'
+                    'home': '', 
+                    'programs': 'programs', 
+                    'admissions': 'admissions'
                 }
                 
                 scraped_content = self.scraper.scrape_pages(pages)
                 
                 if scraped_content:
-                    self.knowledge.update(scraped_content)
-                    # Cache the knowledge
-                    self.cache.set('knowledge_base', self.knowledge)
-                    self.scraper.last_scrape = datetime.now()
-                    
-                    metrics.record_scrape(len(scraped_content), True)
-                    structured_logger.log_scrape_operation(len(scraped_content), True)
-                    logger.info(f"Knowledge updated: {len(scraped_content)} pages")
+                    # Only update if we got meaningful content
+                    if len(scraped_content) >= 1:  # At least 1 page
+                        self.knowledge.update(scraped_content)
+                        self.cache.set('knowledge_base', self.knowledge)
+                        self.scraper.last_scrape = datetime.now()
+                        
+                        metrics.record_scrape(len(scraped_content), True)
+                        structured_logger.log_scrape_operation(len(scraped_content), True)
+                        logger.info(f"Knowledge updated: {len(scraped_content)} pages")
+                    else:
+                        logger.warning("Scraped content too limited, keeping existing knowledge")
                 else:
                     metrics.record_scrape(0, False)
-                    structured_logger.log_scrape_operation(0, False, "No content scraped")
-                    logger.warning("No content scraped, keeping existing knowledge")
+                    structured_logger.log_scrape_operation(0, False, "Website unreachable")
+                    logger.warning("Website unreachable, using fallback knowledge")
+                    # Ensure we have fallback knowledge
+                    if not self.knowledge:
+                        self.knowledge = self.fallback_knowledge.copy()
                 
                 self.status = 'completed'
                 
