@@ -301,7 +301,7 @@ services:
       - MPTI_BASE_URL=https://www.mptigh.com/
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:10000/health"]
+      test: ["CMD", "curl", "-f", "https://mpti-chatbase-backend.onrender.com/health"]
       interval: 30s
       timeout: 10s
       retries: 3

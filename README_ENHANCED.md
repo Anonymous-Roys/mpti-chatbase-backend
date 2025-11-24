@@ -121,7 +121,7 @@ This will test:
 
 ```javascript
 // Chat with MPTI Assistant
-fetch('http://localhost:10000/chat/ai', {
+fetch('https://mpti-chatbase-backend.onrender.com/chat/ai', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -269,7 +269,7 @@ For technical support or questions about the MPTI Chatbase AI system:
 
 1. Check the logs in `mpti_chatbot.log`
 2. Run the test suite: `python test_scraper.py`
-3. Verify backend health: `http://localhost:10000/health`
+3. Verify backend health: `https://mpti-chatbase-backend.onrender.com/health`
 4. Review WordPress plugin settings and logs
 
 ---

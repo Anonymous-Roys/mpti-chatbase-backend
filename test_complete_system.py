@@ -7,7 +7,7 @@ import json
 import time
 
 def test_system_endpoints():
-    base_url = "http://localhost:10000"
+    base_url = "https://mpti-chatbase-backend.onrender.com"
     
     print("Testing Complete System:")
     print("Note: Start the server with 'python app.py' first")
