@@ -6,13 +6,17 @@ import logging
 import threading
 import time
 from datetime import datetime
+import urllib3
+
+# Disable SSL warnings for aggressive scraping
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
 
 class WebScraper:
-    def __init__(self, base_url, timeout=60):
+    def __init__(self, base_url, timeout=8):
         self.base_url = base_url
-        self.timeout = min(timeout, 65)  # Cap at 15 seconds
+        self.timeout = max(timeout, 30)  # Minimum 30 seconds for aggressive scraping
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': 'MPTI-Chatbot/1.0',
@@ -34,16 +38,17 @@ class WebScraper:
                 logger.info(f"Scraped {name}: {len(page_content)} chars")
         return content
     
-    def scrape_page(self, url, max_retries=2):
+    def scrape_page(self, url, max_retries=5):
         """Scrape single page with retry logic"""
         for attempt in range(max_retries + 1):
             try:
                 # Use shorter timeout with explicit connect and read timeouts
                 response = self.session.get(
                     url, 
-                    timeout=(5, self.timeout),  # (connect_timeout, read_timeout)
+                    timeout=(10, self.timeout),  # (connect_timeout, read_timeout)
                     allow_redirects=True,
-                    stream=False
+                    stream=False,
+                    verify=False  # Ignore SSL issues
                 )
                 response.raise_for_status()
                 
@@ -84,17 +89,55 @@ class WebScraper:
                 
             except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
                 if attempt < max_retries:
-                    wait_time = (attempt + 1) * 2  # Exponential backoff
+                    wait_time = min((attempt + 1) * 3, 15)  # Progressive backoff, max 15s
                     logger.warning(f"Timeout/connection error for {url}, retrying in {wait_time}s (attempt {attempt + 1}/{max_retries + 1})")
                     time.sleep(wait_time)
                     continue
                 else:
                     logger.error(f"Failed to scrape {url} after {max_retries + 1} attempts: {e}")
+                    # Try one last time with different approach
+                    return self._emergency_scrape(url)
+            except requests.exceptions.HTTPError as e:
+                if e.response.status_code == 404:
+                    logger.info(f"Page not found (404): {url} - skipping")
                     return None
+                elif attempt < max_retries:
+                    logger.warning(f"HTTP error for {url}: {e}, retrying...")
+                    time.sleep(2)
+                    continue
+                else:
+                    logger.error(f"Failed to scrape {url}: {e}")
+                    return self._emergency_scrape(url)
             except Exception as e:
-                logger.error(f"Failed to scrape {url}: {e}")
-                return None
+                if attempt < max_retries:
+                    logger.warning(f"Error scraping {url}: {e}, retrying...")
+                    time.sleep(2)
+                    continue
+                else:
+                    logger.error(f"Failed to scrape {url}: {e}")
+                    return self._emergency_scrape(url)
         
+        return None
+    
+    def _emergency_scrape(self, url):
+        """Last resort scraping with minimal requirements"""
+        try:
+            # Try with requests without session
+            response = requests.get(
+                url, 
+                timeout=60,
+                headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'},
+                verify=False,
+                allow_redirects=True
+            )
+            if response.status_code == 200:
+                soup = BeautifulSoup(response.content, 'html.parser')
+                text = soup.get_text()
+                clean_text = ' '.join(text.split())[:1000]
+                logger.info(f"Emergency scrape successful for {url}")
+                return f"Emergency Scraped Content\n\n{clean_text}"
+        except:
+            pass
         return None
 
 class LinkExtractor:

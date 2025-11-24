@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class KnowledgeManager:
     def __init__(self, scraper, scrape_interval=3600, cache_type='memory'):
         self.scraper = scraper
-        self.scrape_interval = max(scrape_interval, 1800)  # Minimum 30 minutes for unreliable sites
+        self.scrape_interval = min(scrape_interval, 1800)  # Maximum 30 minutes for aggressive scraping
         self.knowledge = {}
         self.external_links = {}
         self.status = 'idle'
@@ -86,40 +86,72 @@ For specific admission requirements and deadlines, please visit our website or c
         logger.info("Background knowledge updates started")
     
     def update_knowledge(self):
-        """Update knowledge from scraper with caching"""
+        """Update knowledge from scraper with caching - AGGRESSIVE MODE"""
         with self.scraper.lock:
             try:
                 self.status = 'updating'
-                structured_logger.logger.info("Updating knowledge...")
+                structured_logger.logger.info("AGGRESSIVE SCRAPING: Attempting to scrape ALL pages...")
                 
-                # Reduced page list for unreliable website
+                # Core pages that exist - scrape aggressively
                 pages = {
                     'home': '', 
+                    'about': 'about', 
                     'programs': 'programs', 
-                    'admissions': 'admissions'
-                }
+                    'courses': 'courses', 
+                    'admissions': 'admissions', 
+                    'contact': 'contact', 
+                    'tact-program': 'tact-program',
+                    'vericert': 'vericert',
+                    'training-needs-assessment-tna': 'training-needs-assessment-tna',
+                    'stories': 'stories',
+                    'registration-success':'registration-success',
+                    'registration':'registration',
+                    'psychometric-assessment':'psychometric-assessment',
+                    'programme-fees': 'programme-fees',                
+                    }
                 
                 scraped_content = self.scraper.scrape_pages(pages)
                 
-                if scraped_content:
-                    # Only update if we got meaningful content
-                    if len(scraped_content) >= 1:  # At least 1 page
-                        self.knowledge.update(scraped_content)
-                        self.cache.set('knowledge_base', self.knowledge)
-                        self.scraper.last_scrape = datetime.now()
-                        
-                        metrics.record_scrape(len(scraped_content), True)
-                        structured_logger.log_scrape_operation(len(scraped_content), True)
-                        logger.info(f"Knowledge updated: {len(scraped_content)} pages")
-                    else:
-                        logger.warning("Scraped content too limited, keeping existing knowledge")
+                # If initial scraping fails, try individual pages with delays
+                if not scraped_content or len(scraped_content) < 2:
+                    logger.warning("Initial scraping failed, trying individual pages with delays...")
+                    individual_content = {}
+                    for name, path in pages.items():
+                        try:
+                            url = f"{self.scraper.base_url.rstrip('/')}/{path}" if path else self.scraper.base_url
+                            content = self.scraper.scrape_page(url, max_retries=8)
+                            if content:
+                                individual_content[name] = content
+                                logger.info(f"Successfully scraped {name} individually")
+                            time.sleep(3)  # Wait between requests
+                        except Exception as e:
+                            logger.warning(f"Failed individual scrape of {name}: {e}")
+                            continue
+                    
+                    # Merge individual results
+                    if individual_content:
+                        if scraped_content:
+                            scraped_content.update(individual_content)
+                        else:
+                            scraped_content = individual_content
+                
+                # AGGRESSIVE: Accept ANY scraped content (even 1 page)
+                if scraped_content and len(scraped_content) > 0:
+                    self.knowledge.update(scraped_content)
+                    self.cache.set('knowledge_base', self.knowledge)
+                    self.scraper.last_scrape = datetime.now()
+                    
+                    metrics.record_scrape(len(scraped_content), True)
+                    structured_logger.log_scrape_operation(len(scraped_content), True)
+                    logger.info(f"AGGRESSIVE SCRAPING SUCCESS: {len(scraped_content)} pages updated")
                 else:
                     metrics.record_scrape(0, False)
-                    structured_logger.log_scrape_operation(0, False, "Website unreachable")
-                    logger.warning("Website unreachable, using fallback knowledge")
-                    # Ensure we have fallback knowledge
+                    structured_logger.log_scrape_operation(0, False, "All scraping attempts failed")
+                    logger.error("AGGRESSIVE SCRAPING FAILED: All attempts exhausted")
+                    # Still ensure fallback knowledge exists
                     if not self.knowledge:
                         self.knowledge = self.fallback_knowledge.copy()
+                        logger.info("Loaded fallback knowledge as last resort")
                 
                 self.status = 'completed'
                 
