@@ -31,7 +31,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 app = Quart(__name__)
-app = cors(app)
+app = cors(app, allow_origin="*", allow_methods=["POST", "GET", "OPTIONS"], allow_headers=["Content-Type"])
 
 # Initialize components
 validator = InputValidator(Config.MAX_MESSAGE_LENGTH)
