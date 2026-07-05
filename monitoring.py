@@ -55,22 +55,18 @@ metrics = MetricsCollector()
 def monitor_endpoint(endpoint_name):
     def decorator(f):
         @wraps(f)
-        def wrapper(*args, **kwargs):
+        async def wrapper(*args, **kwargs):
             start_time = time.time()
             try:
-                result = f(*args, **kwargs)
+                result = await f(*args, **kwargs)
                 response_time = time.time() - start_time
-                
-                # Extract status code from Flask response
                 status_code = 200
                 if hasattr(result, 'status_code'):
                     status_code = result.status_code
                 elif isinstance(result, tuple) and len(result) > 1:
                     status_code = result[1]
-                
                 metrics.record_request(endpoint_name, response_time, status_code)
                 return result
-                
             except Exception as e:
                 response_time = time.time() - start_time
                 metrics.record_request(endpoint_name, response_time, 500)

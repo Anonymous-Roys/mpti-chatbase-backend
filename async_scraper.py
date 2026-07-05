@@ -71,39 +71,41 @@ class AsyncWebScraper:
                     
                     response.raise_for_status()
                     
-                    # Read content with size limit
-                    content = await response.read()
-                    if len(content) > 500000:  # 500KB limit
+                    # Read and decode full response as text
+                    html = await response.text(encoding='utf-8', errors='replace')
+                    if len(html) > 1000000:  # 1MB text limit - safe to truncate text at word boundary
                         logger.warning(f"Large response from {url}, truncating")
-                        content = content[:500000]
+                        html = html[:1000000]
                     
-                    soup = BeautifulSoup(content, 'html.parser')
+                    soup = BeautifulSoup(html, 'html.parser')
                     
                     # Remove unwanted elements
-                    for element in soup(["script", "style", "nav", "header", "footer"]):
+                    for element in soup(["script", "style", "nav", "header", "footer", "noscript"]):
                         element.decompose()
                     
                     # Extract content
                     title = soup.find('title')
                     title_text = title.get_text().strip() if title else "Page"
                     
-                    # Get main content
+                    # Get main content - try multiple selectors
                     main_content = ""
-                    for selector in ['main', '.content', '#content', 'article']:
+                    for selector in ['main', '[role="main"]', '.entry-content', '.post-content', '.page-content', '.content', '#content', '#main', 'article', '.site-content']:
                         elements = soup.select(selector)
                         if elements:
-                            main_content = ' '.join([elem.get_text().strip() for elem in elements])
-                            break
+                            main_content = ' '.join([elem.get_text(separator=' ', strip=True) for elem in elements])
+                            if len(main_content) > 100:  # Only accept if meaningful content found
+                                break
                     
-                    if not main_content:
+                    if not main_content or len(main_content) < 100:
                         body = soup.find('body')
-                        main_content = body.get_text() if body else ""
+                        main_content = body.get_text(separator=' ', strip=True) if body else ""
                     
                     # Clean content
                     lines = (line.strip() for line in main_content.splitlines())
                     clean_content = ' '.join(line for line in lines if line and len(line) > 2)
+                    clean_content = re.sub(r' {2,}', ' ', clean_content).strip()
                     
-                    return name, f"{title_text}\n\n{clean_content[:1800]}"
+                    return name, f"{title_text}\n\n{clean_content[:3000]}"
                     
             except (aiohttp.ClientError, asyncio.TimeoutError) as e:
                 if attempt < max_retries:
